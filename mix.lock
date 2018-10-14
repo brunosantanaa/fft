@@ -1,0 +1,4 @@
+%{
+  "complex_num": {:hex, :complex_num, "1.0.3", "dafdbbe3f9e91068894432f8ad5d8cf75a057b41e940bba0fbcd4eb401424010", [:mix], [{:numbers, "~> 2.0", [hex: :numbers, repo: "hexpm", optional: false]}], "hexpm"},
+  "numbers": {:hex, :numbers, "2.0.3", "6511b0eb477d1d09c5f0ffa55adde1416aba3db2cb5a0cd484bfdf7a1e22bde0", [:mix], [], "hexpm"},
+}
