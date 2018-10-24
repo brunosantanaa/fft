@@ -5,12 +5,13 @@ defmodule FFT.MixProject do
     [
       app: :fft,
       version: "0.1.0",
-      elixir: "~> 1.6",
+      elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
       name: "FFT",
+      docs: [markdown_processor: ExDoc.Markdown.Cmark],
       source_url: "https://github.com/brunosantanaa/fft"
     ]
   end
@@ -25,6 +26,8 @@ defmodule FFT.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:cmark, "~> 0.6", only: :dev},
+      {:ex_doc, ">=0.0.0", only: :dev},
       {:complex_num, "~>1.0.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
@@ -32,7 +35,7 @@ defmodule FFT.MixProject do
   end
 
   defp description() do
-    ""
+    "Calculation of the fast fourier transform, in the first version for lists of maximum 8bits."
   end
 
   defp package() do

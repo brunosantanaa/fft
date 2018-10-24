@@ -1,21 +1,34 @@
 defmodule FFT do
   @moduledoc """
-  Documentation for FFT.
+  FFT.
+
+  ## Calculation of the fast fourier transform, in the first version for lists of maximum 8bits.
   """
   require Integer
   import :math
+  
+  @doc """
+  solve.
 
-  def solve(a, i \\ -1, s \\ 1, k \\ 0, j \\ 0) do
+  Returns the fft for a list of in the max 8bits
+  """
+  def transformer (a) do
+    solve(a)
+  end
+  defp solve(a, i \\ -1, s \\ 1, k \\ 0, j \\ 0) do
     unless i >= (length(a)) || i == -1 do
-      if (pow(2, s) + j - 1) > (length(a) / 2) do
+      IO.puts "#{i} - #{i+1} ->\tk = #{k}, n = #{pow(2, s)}, s = #{s}, #{(length(a) / 2)} = #{(pow(2, s) + j - 1)}"
+      if (pow(2, s) + j - 1) >= (length(a) / 2) do
+        
         b = butterfly(Enum.at(a, i), Enum.at(a, i+1), k, pow(2, s))
         
         a |> List.update_at(i, &(&1 = Enum.at(b, 0)))
           |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
           |> solve(i + 2, s, k + 1)
       else
-        b = butterfly(Enum.at(a, i), Enum.at(a, i + 1), k, pow(2, s))
 
+        b = butterfly(Enum.at(a, i), Enum.at(a, i + 1), k, pow(2, s))
+        
         a |> List.update_at(i, &(&1 = Enum.at(b, 0))) 
           |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
           |> solve(i + 2, s, k, j + 1)
@@ -24,36 +37,37 @@ defmodule FFT do
       if i == -1 do
         a |> bit_reverse |> solve(i + 1)
       else
-        unless s >= log2(length(a))do
-          a |> even_odd |> solve(0, s + 1)
-        else
-          even_odd(a)
-        end
+        IO.puts "------------------------------------"
+        unless s >= log2(length(a)), do: a |> even_odd |> solve(0, s + 1), else: even_odd(a)
       end
     end
   end
+  @doc """
+  Bit-reverse.
 
-  def butterfly(h, g, k, n) do
+  Returns the fft for a list of in the max 8bits
+  """
+  def bit_reverse(array, reverse \\ [], n \\ 0) do
+    unless n == length(array) do
+      ind = n |> Integer.digits(2)
+              |> zeros(array)
+              |> inverter
+              |> Integer.undigits(2)
+      bit_reverse(array, reverse ++ [Enum.at(array, ind)], n + 1)
+    else
+      reverse
+    end
+  end
+
+  defp butterfly(h, g, k, n) do
     w = ComplexNum.new(1, (-2 * pi() * k / n), :polar)
     t = ComplexNum.mult(w, g)
     [ComplexNum.add(h, t), ComplexNum.sub(h, t)]
   end
 
-  def modulus_vector(a) do
-    Enum.map(a, fn x -> ComplexNum.magnitude(x) end )
-  end
-  
-  def bit_reverse(array, reverse \\ [], n \\ 0) do
-      unless n == length(array) do
-        ind = n |> Integer.digits(2)
-                |> zeros(array)
-                |> inverter
-                |> Integer.undigits(2)
-        bit_reverse(array, reverse ++ [Enum.at(array, ind)], n + 1)
-      else
-        reverse
-      end
-  end
+  #defp modulus_vector(a) do
+  #  Enum.map(a, fn x -> ComplexNum.magnitude(x) end )
+  #end
   defp zeros(bin, a) do
     len = length(bin)
     unless len == :math.log2(length(a)), do: zeros([0] ++ bin, a), else: bin
