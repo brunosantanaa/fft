@@ -8,7 +8,7 @@ The fast fourier transform picks up the signal input in a given time period and 
 
 ## Example
 
-```
+```elixir
 iex> a = [1,1,1,1,0,0,0,0]
 	[1, 1, 1, 1, 0, 0, 0, 0]
 iex> FFT.transform a
@@ -29,7 +29,7 @@ by adding `fft` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:fft, "~> 0.1.0"}
+    {:fft, "~> 0.1.1"}
   ]
 end
 ```
