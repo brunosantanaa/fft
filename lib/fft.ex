@@ -1,16 +1,36 @@
 defmodule FFT do
   @moduledoc """
   FFT - Fast Fourier Transform
+  Algorithm for fast fourier transform, which is widely used in the treatment of signals.
 
+  The fast fourier transform picks up the signal input in a given time period and divides it into its frequency components.
 
   """
   require Integer
   import :math
   
   @doc """
-  solve.
+  Transform
 
-  Returns the fft for a list of in the max 8bits
+  List (With length power of 2) -> Complex List
+
+  Input list and return the fft-list.
+
+  ## Example
+
+  ```
+  iex> a = [1,1,1,1,0,0,0,0]
+    [1, 1, 1, 1, 0, 0, 0, 0]
+  iex> FFT.transform a
+    [#ComplexNum (Cartesian) <4.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <1.0 + -2.414213562373095·𝑖>,
+    #ComplexNum (Cartesian) <0.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <1.0 + -0.4142135623730949·𝑖>,
+    #ComplexNum (Cartesian) <0.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <0.9999999999999999 + 0.4142135623730949·𝑖>,
+    #ComplexNum (Cartesian) <0.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <0.9999999999999997 + 2.414213562373095·𝑖>]
+  ```
   """
   def transform (a) do
     test_var = a |> length |> :math.log2
@@ -43,8 +63,16 @@ defmodule FFT do
   end
   @doc """
   Bit-reverse.
+  List -> List
+  input a list and returns a list with the reassembled elements using bit-reverse.
 
-  Returns the fft for a list of in the max 8bits
+  ## Example
+  ```
+  iex> a = [0, 1, 2, 3, 4, 5, 6, 7]
+  [0, 1, 2, 3, 4, 5, 6, 7]
+  iex> FFT.bit_reverse a
+  [0, 4, 2, 6, 1, 5, 3, 7]
+  ```
   """
   def bit_reverse(array, reverse \\ [], n \\ 0) do
     unless n == length(array) do
@@ -63,7 +91,9 @@ defmodule FFT do
     t = ComplexNum.mult(w, g)
     [ComplexNum.add(h, t), ComplexNum.sub(h, t)]
   end
-
+  @doc """
+  
+  """
   def modulus_vector(a) do
     Enum.map(a, fn x -> ComplexNum.magnitude(x) end )
   end
