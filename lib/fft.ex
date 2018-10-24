@@ -1,8 +1,8 @@
 defmodule FFT do
   @moduledoc """
-  FFT.
+  FFT - Fast Fourier Transform
 
-  ## Calculation of the fast fourier transform, in the first version for lists of maximum 8bits.
+
   """
   require Integer
   import :math
@@ -12,24 +12,20 @@ defmodule FFT do
 
   Returns the fft for a list of in the max 8bits
   """
-  def transformer (a) do
-    solve(a)
+  def transform (a) do
+    test_var = a |> length |> :math.log2
+    if (test_var / round(test_var) == 1), do: solve(a), else: raise(ArgumentError, "The list length is not a power of 2.")
   end
-  defp solve(a, i \\ -1, s \\ 1, k \\ 0, j \\ 0) do
+  defp solve(a, i \\ -1, s \\ 1, k \\ 0, j \\ 1) do
     unless i >= (length(a)) || i == -1 do
-      IO.puts "#{i} - #{i+1} ->\tk = #{k}, n = #{pow(2, s)}, s = #{s}, #{(length(a) / 2)} = #{(pow(2, s) + j - 1)}"
-      if (pow(2, s) + j - 1) >= (length(a) / 2) do
-        
-        b = butterfly(Enum.at(a, i), Enum.at(a, i+1), k, pow(2, s))
-        
+      b = butterfly(Enum.at(a, i), Enum.at(a, i+1), k, pow(2, s))
+      
+      if j >= (length(a) / pow(2, s)) do
         a |> List.update_at(i, &(&1 = Enum.at(b, 0)))
           |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
           |> solve(i + 2, s, k + 1)
       else
-
-        b = butterfly(Enum.at(a, i), Enum.at(a, i + 1), k, pow(2, s))
-        
-        a |> List.update_at(i, &(&1 = Enum.at(b, 0))) 
+        a |> List.update_at(i, &(&1 = Enum.at(b, 0)))
           |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
           |> solve(i + 2, s, k, j + 1)
       end
@@ -37,8 +33,11 @@ defmodule FFT do
       if i == -1 do
         a |> bit_reverse |> solve(i + 1)
       else
-        IO.puts "------------------------------------"
-        unless s >= log2(length(a)), do: a |> even_odd |> solve(0, s + 1), else: even_odd(a)
+        unless s >= log2(length(a))do
+          a |> even_odd |> solve(0, s + 1)
+        else
+          even_odd(a)
+        end
       end
     end
   end
@@ -65,9 +64,9 @@ defmodule FFT do
     [ComplexNum.add(h, t), ComplexNum.sub(h, t)]
   end
 
-  #defp modulus_vector(a) do
-  #  Enum.map(a, fn x -> ComplexNum.magnitude(x) end )
-  #end
+  def modulus_vector(a) do
+    Enum.map(a, fn x -> ComplexNum.magnitude(x) end )
+  end
   defp zeros(bin, a) do
     len = length(bin)
     unless len == :math.log2(length(a)), do: zeros([0] ++ bin, a), else: bin
@@ -76,7 +75,7 @@ defmodule FFT do
     [h | t] = bin
     unless t == [], do: inverter(t, [h] ++ resp), else: [h] ++ resp
   end
-  def even_odd(a, rec \\ -1, e \\ [], o \\ [], n \\ 0) do
+  defp even_odd(a, rec \\ -1, e \\ [], o \\ [], n \\ 0) do
     unless n >= length(a) do
       if Integer.is_even(n), 
         do: even_odd(a, rec, e ++ [Enum.at(a, n)], o ,n + 1), else: even_odd(a,rec , e, o ++ [Enum.at(a, n)],n + 1)
