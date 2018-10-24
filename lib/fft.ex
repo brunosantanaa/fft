@@ -10,11 +10,9 @@ defmodule FFT do
   import :math
   
   @doc """
-  Transform
+  Input list and return the fft-list.
 
   List (With length power of 2) -> Complex List
-
-  Input list and return the fft-list.
 
   ## Example
 
@@ -55,9 +53,9 @@ defmodule FFT do
     end
   end
   @doc """
-  Bit-reverse.
+  Input a list and returns a list with the reassembled elements using bit-reverse.
+
   List -> List
-  input a list and returns a list with the reassembled elements using bit-reverse.
 
   ## Example
   ```
@@ -85,7 +83,21 @@ defmodule FFT do
     [ComplexNum.add(h, t), ComplexNum.sub(h, t)]
   end
   @doc """
+  Returns vector where each is the modulus of the complexe number
+
+  ## Example
   
+  ```elixir
+  iex>  a = [1, 0, 1, 0]
+    [1, 0, 1, 0]
+  iex> a = FFT.transform a
+    [#ComplexNum (Cartesian) <2.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <0.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <2.0 + 0.0·𝑖>,
+    #ComplexNum (Cartesian) <0.0 + 0.0·𝑖>]
+  iex> FFT.modulus_vector a
+    [2.0, 0.0, 2.0, 0.0]
+  ```
   """
   def modulus_vector(a) do
     Enum.map(a, fn x -> ComplexNum.magnitude(x) end )
