@@ -39,21 +39,14 @@ defmodule FFT do
   defp solve(a, i \\ -1, s \\ 1, k \\ 0, j \\ 1) do
     unless i >= (length(a)) || i == -1 do
       b = butterfly(Enum.at(a, i), Enum.at(a, i+1), k, pow(2, s))
-      
-      if j >= (length(a) / pow(2, s)) do
-        a |> List.update_at(i, &(&1 = Enum.at(b, 0)))
-          |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
-          |> solve(i + 2, s, k + 1)
-      else
-        a |> List.update_at(i, &(&1 = Enum.at(b, 0)))
-          |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
-          |> solve(i + 2, s, k, j + 1)
-      end
+      att_matrix = a |> List.update_at(i, &(&1 = Enum.at(b, 0))) 
+                     |> List.update_at((i + 1), &(&1 = Enum.at(b, 1)))
+      if j >= (length(a) / pow(2, s)), do: solve(att_matrix, i + 2, s, k + 1), else: solve(att_matrix, i + 2, s, k, j + 1)
     else
       if i == -1 do
         a |> bit_reverse |> solve(i + 1)
       else
-        unless s >= log2(length(a))do
+        unless s >= log2(length(a)) do
           a |> even_odd |> solve(0, s + 1)
         else
           even_odd(a)
